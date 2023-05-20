@@ -1,0 +1,85 @@
+<canvas width="1920" height="1080"></canvas>
+
+<script>
+
+    var tela = document.querySelector('canvas');
+    var pincel = tela.getContext('2d');
+    //criando plano de fundo
+    pincel.fillStyle = 'white';
+    pincel.fillRect(0, 0, 1920, 1080);
+    //defindo raio e imagem
+    var raio = 50;
+    var imagem = new Image();
+    imagem.src = "alvo.jpg"; // Substitua pelo caminho da sua imagem
+
+    
+  
+
+    function desenhaCirculo(x, y, raio, cor) {
+
+        pincel.fillStyle = cor;
+        pincel.beginPath();
+        pincel.arc(x, y, raio, 0, 2 * Math.PI);
+        pincel.fill();
+    }
+    
+    function desenhaAlvo(x,y){
+        desenhaCirculo(x,y, raio + 20, 'red');
+        desenhaCirculo(x,y, raio + 10, 'white');
+        
+        imagem.onload = function () {
+            
+            // Desenhar a máscara circular
+            pincel.beginPath();
+            pincel.arc(x, y, raio, 0, Math.PI * 2, true);
+            pincel.closePath();
+            pincel.clip();
+
+            // Desenhar a imagem recortada no canvas
+            pincel.drawImage(imagem,x - raio , y - raio , raio * 2, raio * 2);
+            };
+
+    }
+
+    //em construção (ignorar função dispara)
+    function dispara(evento) {
+
+        var x = evento.pageX - tela.offsetLeft;
+        var y = evento.pageY - tela.offsetTop;
+
+
+        if (x > 300 - raio 
+            && x < 300 + raio
+                && y > 200 - raio 
+                    && y < 200 + raio) {
+
+            alert('Acertou');
+        }
+    }
+//gera coordenadas aleatórias
+    function geraCoords() {
+  var x = Math.floor(Math.random() * (1870 - 70 + 1) + 70);
+  var y = Math.floor(Math.random() * (1030 - 70 + 1) + 70);
+  return [x, y];
+}
+//limpa a tela
+    function limpaTela() {
+        pincel.clearRect(0, 0, 1920, 1080);
+    }
+//roda o jogo a cada 1 segundo usando setInterval
+    function rodaJogo(){
+        limpaTela();
+        [x,y] = geraCoords();
+        desenhaAlvo(x,y);
+        console.log(x,y);
+        
+    }
+//desse jeito não funciona, porém sem o setInterval funciona :(
+   // setInterval(rodaJogo, 1000);
+    
+   //sempre que dar ctrl + r ele roda o código e desenha certinho em posições diferentes com os circulos e imagem, porém usando o setInterval aparece apenas os circulos, sem a imagem
+   rodaJogo();
+    
+    tela.onclick = dispara;
+
+</script>
